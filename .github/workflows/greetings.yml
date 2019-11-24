@@ -1,0 +1,12 @@
+name: Greetings
+
+on: [commit_comment,push]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'Ok le commit a été effectué''first commit'
