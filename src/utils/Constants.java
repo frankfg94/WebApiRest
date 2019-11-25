@@ -30,7 +30,7 @@ public class Constants {
 	// Queries
 
 	// Common
-	public static final String QUERY_DELETE = "DELETE FROM ? WHERE ? = ?";
+	public static final String QUERY_DELETE = "DELETE FROM $tName WHERE $tId = ?";
 
 	// User table
 	public static final String QUERY_USER_GET_ALL = "SELECT * from " + USER_TABLE_NAME;
