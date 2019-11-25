@@ -100,7 +100,7 @@ public class UserDao extends Dao<User> {
 	}
 	
 	public void delete(int id){
-		super.delete(Constants.COMMENT_TABLE_NAME, Constants.COMMENT_TABLE_ID_F, id);
+		super.delete(Constants.USER_TABLE_NAME, Constants.USER_TABLE_ID_F, id);
 	}
 	
 	/**
