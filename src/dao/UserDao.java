@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import model.Comment;
 import model.User;
 import utils.Constants;
 
@@ -100,6 +101,21 @@ public class UserDao extends Dao<User> {
 	
 	public void delete(int id){
 		super.delete(Constants.COMMENT_TABLE_NAME, Constants.COMMENT_TABLE_ID_F, id);
+	}
+	
+	/**
+	 * Getting all the comments for this user
+	 */
+	public List<Comment> getAllComments(int id) throws SQLException {
+		System.out.println();
+			List<Comment> coms = new CommentDao().getAll();
+			List<Comment> comId = new ArrayList<Comment>();
+			for(Comment c : coms)
+			{
+				if(c.getUser_id() == id)
+					comId.add(c);
+			}
+			return comId;
 	}
 	
 }

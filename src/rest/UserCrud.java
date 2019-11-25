@@ -14,7 +14,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import dao.CommentDao;
 import dao.UserDao;
+import model.Comment;
 import model.User;
 
 @Path("users")
@@ -72,8 +74,13 @@ public class UserCrud implements CrudBase<User> {
 	  
 	  //////////// End of implementation of the CrudBase methods///////////
 	  
-	  
-	  
-	  
+	  	/**
+		 * Getting all the comments for this user
+		 */
+	  	@Path("/{id}/comments")
+	  	@GET
+		public List<Comment> getAllComments(@PathParam("id") int id) throws SQLException {
+			return	new UserDao().getAllComments(id);
+		}
 	
 }

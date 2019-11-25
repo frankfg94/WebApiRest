@@ -121,4 +121,6 @@ public class CommentDao extends Dao<Comment> {
 		return new UserDao().get(userId);
 	}
 	
+
+	
 }

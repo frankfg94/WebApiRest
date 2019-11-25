@@ -18,7 +18,7 @@ import dao.CommentDao;
 import model.Comment;
 import model.User;
 
-@Path("comment")
+@Path("comments")
 public class CommentCrud implements CrudBase<Comment>{
 
 	  @Override
@@ -92,6 +92,9 @@ public class CommentCrud implements CrudBase<Comment>{
 	  {
 		  return new CommentDao().getAuthor(id);
 	  }
+	  
+
+		
 	  	
 }
 

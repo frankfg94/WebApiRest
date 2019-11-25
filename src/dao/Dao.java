@@ -16,13 +16,9 @@ public abstract class Dao<T> {
 	/* The methods that will use our connection */
 	
 	 	abstract T get(long id) throws SQLException;
-     
 	    abstract List<T> getAll() throws SQLException;
-	     
-	    abstract void save(T t) throws SQLException;
-	     
+	    abstract void save(T t) throws SQLException;	     
 	    abstract void update(T t)  throws SQLException;
-	     
 	    abstract void delete(T t)throws SQLException;
 	    
 	    /**
