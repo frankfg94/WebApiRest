@@ -48,11 +48,13 @@ public abstract class Dao<T> {
 	     */
 		public void delete(String tableName, String tableIdF, int toDelId) {
 			try {
-	        	PreparedStatement preparedStmt = Dao.getConnection().prepareStatement(Constants.QUERY_DELETE);
-				preparedStmt.setString(1, tableName);
-				preparedStmt.setString(2, tableIdF);
-				preparedStmt.setInt(3, toDelId);
-				preparedStmt.execute();
+	        	PreparedStatement preparedStmt = Dao.getConnection().prepareStatement(
+	        			Constants.QUERY_DELETE
+	        			.replace("$tName",tableName)
+	        			.replace("$tId", tableIdF));
+				preparedStmt.setInt(1, toDelId);
+				System.out.print("DELETE FROM " + tableName + " WHERE " + tableIdF + " = " + toDelId);
+				preparedStmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
