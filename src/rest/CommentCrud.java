@@ -92,7 +92,7 @@ public class CommentCrud implements CrudBase<Comment>{
 	  {
 		  return new CommentDao().getAuthor(id);
 	  }
-	  
+	  	 
 
 		
 	  	

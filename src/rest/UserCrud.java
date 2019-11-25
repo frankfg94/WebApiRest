@@ -82,5 +82,17 @@ public class UserCrud implements CrudBase<User> {
 		public List<Comment> getAllComments(@PathParam("id") int id) throws SQLException {
 			return	new UserDao().getAllComments(id);
 		}
+	  	
+	  	
+	  	/**
+	  	 * Getting a specific comment amongst all the comments
+	  	 */
+	  	@Path("/{id}/comments/{idCom}")
+	  	@GET
+		public Comment getCommentFromAllComments(@PathParam("id") int id, @PathParam("idCom") int idCom) throws SQLException {
+			return	new UserDao().getAllComments(id).get(idCom-1);
+		}
+	  	 
+
 	
 }
