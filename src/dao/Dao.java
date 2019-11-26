@@ -53,9 +53,7 @@ public abstract class Dao<T> {
 	        			.replace("$tName",tableName)
 	        			.replace("$tId", tableIdF));
 				preparedStmt.setInt(1, toDelId);
-				System.out.print("DELETE FROM " + tableName + " WHERE " + tableIdF + " = " + toDelId);
 				preparedStmt.executeUpdate();
-				
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
