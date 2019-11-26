@@ -1,11 +1,13 @@
 package rest;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import dao.CategoryDao;
+import dao.MediaDao;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,6 +20,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import model.Category;
+import model.Media;
 
 @Path("category")
 public class CategoryCrud implements CrudBase<Category>{
@@ -32,7 +35,7 @@ public class CategoryCrud implements CrudBase<Category>{
 	@Override
 	@DELETE
 	@Path("/{id}")
-	public void delete(int id) throws SQLException {
+	public void delete(@PathParam("id")int id) throws SQLException {
 		new CategoryDao().delete(id);
 	}
 
@@ -72,6 +75,27 @@ public class CategoryCrud implements CrudBase<Category>{
 		  } 
 		  String result = "Data sent successfully  :  \n"+ com;
 		  return Response.status(201).entity(result).build();
+	}
+	
+	
+	  //////////// End of implementation of the CrudBase methods///////////
+
+	/**
+	 * Get all the medias related to a category identifier
+	 */
+	@GET
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@Path("/{id}/medias")
+	public List<Media> getAllMediasForCategoryId(@PathParam("id") int id) throws SQLException 
+	{
+		List<Media> medias = new MediaDao().getAll();
+		List<Media> filteredMedias  = new ArrayList<Media>();
+		for(Media m : medias)
+		{
+			if(m.getCat_id() == id)
+				filteredMedias.add(m);
+		}
+		return filteredMedias;
 	}
 
 }

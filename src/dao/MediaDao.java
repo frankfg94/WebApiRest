@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import model.Category;
 import model.Media;
 import model.User;
 import utils.Constants;
@@ -115,6 +116,14 @@ public class MediaDao extends Dao<Media> {
 		return new UserDao().get(userId);
 	}
 
+	/**
+	 * Obtaining the category related to the indicated media
+	 */
+	public Category getCategory(int mediaId) throws SQLException{
+		int catId = this.get(mediaId).getCat_id();
+		return new CategoryDao().get(catId);
+	}
+	
 	public List<Media> getMediasSortedByKeyword(String sortType, String mode) throws SQLException {
 		List<Media> sortedUsers = new ArrayList<>();
 		String query = "SELECT * FROM media ORDER BY " + sortType + " " + mode ; // Ascending(asc) or descending (desc)

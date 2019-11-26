@@ -15,7 +15,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import dao.CategoryDao;
 import dao.MediaDao;
+import model.Category;
 import model.Media;
 import model.User;
 
@@ -87,6 +89,14 @@ public class MediaCrud implements CrudBase<Media> {
 	  public User getUserOfMedia(@PathParam("id") int id) throws SQLException
 	  {
 		  return new MediaDao().getAuthor(id);
+	  }
+	  
+	  @GET
+	  @Path("/{id}/cat")
+	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	  public Category getCatOfMedia(@PathParam("id") int id) throws SQLException
+	  {
+		  return new MediaDao().getCategory(id);
 	  }
 	  
 	  /**
