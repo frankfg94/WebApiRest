@@ -1,6 +1,7 @@
 package rest;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -14,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import dao.CommentDao;
 import dao.MediaDao;
 import model.Media;
 import model.User;
@@ -73,11 +73,9 @@ public class MediaCrud implements CrudBase<Media> {
 		  return Response.status(201).entity(result).build();
 	}
 	
-	
 	  //////////// End of implementation of the CrudBase methods///////////
 
-
-	  /**
+	   /**
 	   * Returns the user associated to the media id
 	   * @param id
 	   * @return
@@ -90,5 +88,25 @@ public class MediaCrud implements CrudBase<Media> {
 	  {
 		  return new MediaDao().getAuthor(id);
 	  }
+	  
+	  /**
+	   * Sort all the users not with the id but with the name 
+	   * @param mediaId
+	   * @return
+	   * @throws SQLException
+	   */
+	  @GET
+	  @Path("/sortBy/{sortType}/{mode}")
+	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	  public List<Media> sortMediasByName(@PathParam("sortType") String sortType,@PathParam("mode") String mode) throws SQLException
+	  {
+		  if(mode.isEmpty())
+		  {
+			  return null;
+		  }
+		  return new MediaDao().getMediasSortedByKeyword(sortType, mode);
+	  }
+	  
 
+	  
 }

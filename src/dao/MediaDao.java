@@ -3,6 +3,7 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -112,6 +113,24 @@ public class MediaDao extends Dao<Media> {
 	public User getAuthor(int id) throws SQLException {
 		int userId = this.get(id).getUser_id();
 		return new UserDao().get(userId);
+	}
+
+	public List<Media> getMediasSortedByKeyword(String sortType, String mode) throws SQLException {
+		List<Media> sortedUsers = new ArrayList<>();
+		String query = "SELECT * FROM media ORDER BY " + sortType + " " + mode ; // Ascending(asc) or descending (desc)
+		ResultSet rs = Dao.getConnection().createStatement().executeQuery(query);
+		while (rs.next()) {
+			Media media = new Media();
+			media.setMedia_id(rs.getInt(Constants.MEDIA_TABLE_ID_F));
+			media.setTitle(rs.getString(Constants.MEDIA_TABLE_TITLE_F));
+			media.setYear(rs.getInt(Constants.MEDIA_TABLE_YEAR_F));
+			media.setDescription(rs.getString(Constants.MEDIA_TABLE_DESCRIPTION_F));
+			media.setCreator(rs.getString(Constants.MEDIA_TABLE_CREATOR_F));
+			media.setUser_id(rs.getInt(Constants.MEDIA_TABLE_USER_ID_F));
+			media.setCat_id(rs.getInt(Constants.MEDIA_TABLE_CAT_ID_F));
+		sortedUsers.add(media);
+		}
+		return sortedUsers;
 	}
 
 }
