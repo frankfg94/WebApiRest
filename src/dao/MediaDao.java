@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import model.Media;
+import model.User;
 import utils.Constants;
 
 public class MediaDao extends Dao<Media> {
@@ -104,6 +105,13 @@ public class MediaDao extends Dao<Media> {
 
 	public void delete(int id) {
 		super.delete(Constants.MEDIA_TABLE_NAME, Constants.MEDIA_TABLE_ID_F, id);
+	}
+	
+	  //////////// End of implementation of the CrudBase methods///////////
+
+	public User getAuthor(int id) throws SQLException {
+		int userId = this.get(id).getUser_id();
+		return new UserDao().get(userId);
 	}
 
 }

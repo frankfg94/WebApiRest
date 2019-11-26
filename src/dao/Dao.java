@@ -54,7 +54,6 @@ public abstract class Dao<T> {
 	        			.replace("$tId", tableIdF));
 				preparedStmt.setInt(1, toDelId);
 				preparedStmt.executeUpdate();
-				
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

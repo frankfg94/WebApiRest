@@ -14,8 +14,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import dao.CommentDao;
 import dao.MediaDao;
 import model.Media;
+import model.User;
 
 @Path("media")
 public class MediaCrud implements CrudBase<Media> {
@@ -70,5 +72,23 @@ public class MediaCrud implements CrudBase<Media> {
 		  String result = "Data sent successfully  :  \n"+ com;
 		  return Response.status(201).entity(result).build();
 	}
+	
+	
+	  //////////// End of implementation of the CrudBase methods///////////
+
+
+	  /**
+	   * Returns the user associated to the media id
+	   * @param id
+	   * @return
+	   * @throws SQLException
+	   */
+	  @GET
+	  @Path("/{id}/user")
+	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	  public User getUserOfMedia(@PathParam("id") int id) throws SQLException
+	  {
+		  return new MediaDao().getAuthor(id);
+	  }
 
 }
