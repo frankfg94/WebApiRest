@@ -2,13 +2,16 @@ package rest;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-
 public interface  CrudBase<T> {
 
+	/**
+	 * Create Read Update Delete
+	 * @return
+	 * @throws SQLException
+	 */
 
 	  public  List<T> getAll() throws SQLException; 
 

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 import utils.Constants;
 
+//Dao = Data Access Object
 
 public abstract class Dao<T> {
 	
@@ -22,7 +23,7 @@ public abstract class Dao<T> {
 	    abstract void delete(T t)throws SQLException;
 	    
 	    /**
-	     * For obtaining the MySql database connection 
+	     * To obtain the MySql database connection 
 	     */
 	    public static Connection getConnection() throws SQLException
 	    {
@@ -58,6 +59,4 @@ public abstract class Dao<T> {
 				e.printStackTrace();
 			}
 		}
-		
-		
 }
