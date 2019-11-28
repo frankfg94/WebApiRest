@@ -76,7 +76,7 @@ public class Constants {
 
 		public static final String QUERY_MEDIA_INSERT = String.format("INSERT INTO %s(%s,%s,%s,%s,%s,%s) values(?,?,?,?,?,?)",
 				MEDIA_TABLE_NAME,MEDIA_TABLE_TITLE_F, MEDIA_TABLE_YEAR_F, MEDIA_TABLE_DESCRIPTION_F, MEDIA_TABLE_CREATOR_F, MEDIA_TABLE_USER_ID_F, MEDIA_TABLE_CAT_ID_F);
-	
+		public static final String QUERY_MEDIA_SEARCH_BY_KEYWORD = String.format("SELECT * FROM %s WHERE %s LIKE ? OR %s LIKE ? OR %s LIKE ? OR %s LIKE ?", MEDIA_TABLE_NAME, MEDIA_TABLE_CREATOR_F, MEDIA_TABLE_DESCRIPTION_F, MEDIA_TABLE_TITLE_F, MEDIA_TABLE_YEAR_F );
 
 	// Database & Driver Information
 	public static final String DB_NAME = "restweb";
@@ -85,7 +85,7 @@ public class Constants {
 			+ "zeroDateTimeBehavior=convertToNull" + "&useJDBCCompliantTimezoneShift=true"
 			+ "&useLegacyDatetimeCode=false" + "&serverTimezone=UTC";
 
-	public static final String DB_PASSWORD = "jee";
-	public static final String DB_USERNAME = "jee";
+	public static final String DB_PASSWORD = "";
+	public static final String DB_USERNAME = "root";
 
 }
