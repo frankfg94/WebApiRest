@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import dao.CommentDao;
 import dao.UserDao;
 import model.Comment;
+import model.Media;
 import model.User;
 
 @Path("users")
@@ -56,7 +57,7 @@ public class UserCrud implements CrudBase<User> {
 	   	  
 	  @Override
 	  @GET
-	  @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 	  @Path("/{id}")
 	  public User find(@PathParam("id") int id) throws SQLException
 	  {
@@ -79,20 +80,28 @@ public class UserCrud implements CrudBase<User> {
 		 */
 	  	@Path("/{id}/comments")
 	  	@GET
-		public List<Comment> getAllComments(@PathParam("id") int id) throws SQLException {
+	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	  	public List<Comment> getAllComments(@PathParam("id") int id) throws SQLException {
 			return	new UserDao().getAllComments(id);
 		}
-	  	
 	  	
 	  	/**
 	  	 * Getting a specific comment amongst all the comments
 	  	 */
 	  	@Path("/{id}/comments/{idCom}")
 	  	@GET
+	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 		public Comment getCommentFromAllComments(@PathParam("id") int id, @PathParam("idCom") int idCom) throws SQLException {
 			return	new UserDao().getAllComments(id).get(idCom-1);
 		}
-	  	 
-
-	
+	  	
+	  	/**
+		 * Getting all the media for this user
+		 */
+	  	@Path("/{id}/media")
+	  	@GET
+	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+		public List<Media> getAllMediaFromOneUser(@PathParam("id") int id) throws SQLException {
+			return	new UserDao().getAllMedia(id);
+		}
 }

@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import model.Comment;
+import model.Media;
 import model.User;
 import utils.Constants;
 
@@ -107,7 +108,6 @@ public class UserDao extends Dao<User> {
 	 * Getting all the comments for this user
 	 */
 	public List<Comment> getAllComments(int id) throws SQLException {
-		System.out.println();
 			List<Comment> coms = new CommentDao().getAll();
 			List<Comment> comId = new ArrayList<Comment>();
 			for(Comment c : coms)
@@ -116,6 +116,21 @@ public class UserDao extends Dao<User> {
 					comId.add(c);
 			}
 			return comId;
+	}
+
+	/**
+	 * Getting all the media for this user
+	 * @throws SQLException 
+	 */
+	public List<Media> getAllMedia(int id) throws SQLException {
+		List<Media> coms = new MediaDao().getAll();
+		List<Media> comId = new ArrayList<Media>();
+		for(Media c : coms)
+		{
+			if(c.getUser_id() == id)
+				comId.add(c);
+		}
+		return comId;
 	}
 	
 
