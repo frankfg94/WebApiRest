@@ -27,6 +27,17 @@ public class Constants {
 	public static final String MEDIA_TABLE_USER_ID_F = "user_id";
 	public static final String MEDIA_TABLE_CAT_ID_F = "cat_id";
 	
+	
+	// Category table
+			public static final String CAT_TABLE_NAME = "category";
+			public static final String CAT_TABLE_ID_F = "cat_id";
+			public static final String CAT_TABLE_NAME_F = "cat_name";
+			
+	// Category table
+    public static final String QUERY_CAT_GET_ALL = "SELECT * from "+CAT_TABLE_NAME;
+    public static final String QUERY_CAT_GET = String.format("SELECT * FROM %s WHERE %s = ? LIMIT 1",CAT_TABLE_NAME,CAT_TABLE_ID_F);
+    public static final String QUERY_CAT_UPDATE = String.format("UPDATE %s  SET %s = ? WHERE %s = ?",CAT_TABLE_NAME,CAT_TABLE_NAME_F, CAT_TABLE_ID_F);
+    public static final String QUERY_CAT_INSERT = String.format("INSERT INTO %s(%s) values(?)",CAT_TABLE_NAME,CAT_TABLE_NAME_F);
 	// Queries
 
 	// Common
