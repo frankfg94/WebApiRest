@@ -87,5 +87,8 @@ public class Constants {
 
 	public static final String DB_PASSWORD = "";
 	public static final String DB_USERNAME = "root";
+	public static final String DENY_ALL_REQUEST_MESSAGE = "Sorry, you do not have the rights to use this request";
+	public static final String NO_AUTH_HEADER_MESSAGE = "No authorization header was found, so we cannot process the request";
+	public static final String INVALID_CREDENTIALS = "The credentials you entered for this rest Request are not valid";
 
 }

@@ -126,7 +126,7 @@ public class MediaDao extends Dao<Media> {
 	}
 	
 	public List<Media> getMediasSortedByKeyword(String sortType, String mode) throws SQLException {
-		List<Media> sortedUsers = new ArrayList<>();
+		List<Media> sortedUsers = new ArrayList<Media>();
 		String query = "SELECT * FROM media ORDER BY " + sortType + " " + mode ; // Ascending(asc) or descending (desc)
 		ResultSet rs = Dao.getConnection().createStatement().executeQuery(query);
 		while (rs.next()) {
@@ -147,7 +147,7 @@ public class MediaDao extends Dao<Media> {
 	public List<Media> getMediaSearchByKeyWord(String keyWord) throws SQLException {
 		String k = "%"+keyWord+"%";
 		PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_MEDIA_SEARCH_BY_KEYWORD);
-		List<Media> listMedia = new ArrayList<>();
+		List<Media> listMedia = new ArrayList<Media>();
 		stment.setString(1, k);
 		stment.setString(2, k);
 		stment.setString(3, k);

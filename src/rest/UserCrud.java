@@ -3,6 +3,7 @@ package rest;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import dao.CommentDao;
 import dao.UserDao;
 import model.Comment;
 import model.Media;
@@ -24,6 +24,7 @@ import model.User;
 public class UserCrud implements CrudBase<User> {
 
       @Override
+      @RolesAllowed("ADMIN")
 	  @GET
 	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 	  public List<User> getAll() throws SQLException
