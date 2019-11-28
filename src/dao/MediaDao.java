@@ -141,5 +141,29 @@ public class MediaDao extends Dao<Media> {
 		}
 		return sortedUsers;
 	}
+	
+	public List<Media> getMediaSearchByKeyWord(String keyWord) throws SQLException {
+		String k = "%"+keyWord+"%";
+		PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_MEDIA_SEARCH_BY_KEYWORD);
+		List<Media> listMedia = new ArrayList<>();
+		stment.setString(1, k);
+		stment.setString(2, k);
+		stment.setString(3, k);
+		stment.setString(4, k);
+		stment.executeQuery();
+		ResultSet rs = stment.getResultSet();
+		while (rs.next()){
+			Media media = new Media();
+			media.setMedia_id(rs.getInt(Constants.MEDIA_TABLE_ID_F));
+			media.setTitle(rs.getString(Constants.MEDIA_TABLE_TITLE_F));
+			media.setYear(rs.getInt(Constants.MEDIA_TABLE_YEAR_F));
+			media.setDescription(rs.getString(Constants.MEDIA_TABLE_DESCRIPTION_F));
+			media.setCreator(rs.getString(Constants.MEDIA_TABLE_CREATOR_F));
+			media.setUser_id(rs.getInt(Constants.MEDIA_TABLE_USER_ID_F));
+			media.setCat_id(rs.getInt(Constants.MEDIA_TABLE_CAT_ID_F));
+			listMedia.add(media);
+		}
+		return listMedia;
+	}
 
 }

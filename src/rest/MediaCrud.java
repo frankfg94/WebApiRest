@@ -117,6 +117,14 @@ public class MediaCrud implements CrudBase<Media> {
 		  return new MediaDao().getMediasSortedByKeyword(sortType, mode);
 	  }
 	  
+	  @GET
+	  @Path("/search/{keyword}")
+	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	  public List<Media> searchMediaByKeyWord(@PathParam("keyword") String keyword)throws SQLException
+	  {
+		  return new MediaDao().getMediaSearchByKeyWord(keyword);
+	  }
+	  
 
 	  
 }
