@@ -17,7 +17,9 @@ import javax.ws.rs.core.Response;
 
 import dao.CategoryDao;
 import dao.MediaDao;
+import dao.UserDao;
 import model.Category;
+import model.Comment;
 import model.Media;
 import model.User;
 
@@ -116,7 +118,8 @@ public class MediaCrud implements CrudBase<Media> {
 		  }
 		  return new MediaDao().getMediasSortedByKeyword(sortType, mode);
 	  }
-	  
+
+  
 	  @GET
 	  @Path("/search/{keyword}")
 	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -124,7 +127,17 @@ public class MediaCrud implements CrudBase<Media> {
 	  {
 		  return new MediaDao().getMediaSearchByKeyWord(keyword);
 	  }
-	  
+
+    /**
+		 * Getting all the comments for this media
+		 */
+	  	@Path("/{id}/comments")
+	  	@GET
+	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+		public List<Comment> getAllComments(@PathParam("id") int id) throws SQLException {
+			return	new MediaDao().getAllComments(id);
+		}
+
 
 	  
 }

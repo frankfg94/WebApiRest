@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import model.Category;
+import model.Comment;
 import model.Media;
 import model.User;
 import utils.Constants;
@@ -142,6 +143,7 @@ public class MediaDao extends Dao<Media> {
 		return sortedUsers;
 	}
 	
+
 	public List<Media> getMediaSearchByKeyWord(String keyWord) throws SQLException {
 		String k = "%"+keyWord+"%";
 		PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_MEDIA_SEARCH_BY_KEYWORD);
@@ -165,5 +167,20 @@ public class MediaDao extends Dao<Media> {
 		}
 		return listMedia;
 	}
+	/**
+	 * Getting all the comments for this media
+	 */
+	public List<Comment> getAllComments(int id) throws SQLException {
+			List<Comment> coms = new CommentDao().getAll();
+			List<Comment> comId = new ArrayList<Comment>();
+			for(Comment c : coms)
+			{
+				if(c.getMedia_id() == id)
+					comId.add(c);
+			}
+			return comId;
+	}
+	
+
 
 }
