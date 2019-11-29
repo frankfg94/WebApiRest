@@ -37,6 +37,7 @@ public class UserDao extends Dao<User> {
 				user.setUser_id(rs.getInt(Constants.USER_TABLE_ID_F));
 				user.setName(rs.getString(Constants.USER_TABLE_NAME_F));
 				user.setCity(rs.getString(Constants.USER_TABLE_CITY_F));
+				user.setPassword(rs.getString(Constants.USER_TABLE_PASSWORD_F));
 				return user;
 			}
 		return null;
@@ -59,7 +60,8 @@ public class UserDao extends Dao<User> {
 	               u.setUser_id(rs.getInt(Constants.USER_TABLE_ID_F));
 	               u.setCity(rs.getString(Constants.USER_TABLE_CITY_F));
 	               u.setName(rs.getString(Constants.USER_TABLE_NAME_F));
-	               
+				   u.setPassword(rs.getString(Constants.USER_TABLE_PASSWORD_F));
+
 	               if(INFOS)
 	            	   Logger.getLogger(UserDao.class.getName()).log(Level.INFO,u.toString());
 	        users.add(u);    
@@ -73,6 +75,7 @@ public class UserDao extends Dao<User> {
 			PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_USER_INSERT);
             stment.setString(1, t.getName());
             stment.setString(2, t.getCity());
+            stment.setString(3, t.getPassword());
 			stment.executeUpdate();
 			
 			if(INFOS)

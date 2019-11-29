@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import dao.CategoryDao;
 import dao.MediaDao;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,6 +35,7 @@ public class CategoryCrud implements CrudBase<Category>{
 
 	@Override
 	@DELETE
+	@RolesAllowed("USER")
 	@Path("/{id}")
 	public void delete(@PathParam("id")int id) throws SQLException {
 		new CategoryDao().delete(id);

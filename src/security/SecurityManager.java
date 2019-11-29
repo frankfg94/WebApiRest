@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
@@ -13,11 +15,17 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import com.sun.jersey.core.util.Base64;
+import org.apache.tomcat.util.http.fileupload.RequestContext;
+import org.glassfish.jersey.internal.util.Base64;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
+
+import dao.UserDao;
+import model.User;
 import utils.Constants;
 
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +41,7 @@ public class SecurityManager implements ContainerRequestFilter {
 	
 	private static final String AUTHORIZATION_PROPERTY = "Authorization";
 	private static final String AUTHENTICATION_SCHEME = "Basic";
+	private static final boolean DEBUG = true;
 	
 	/**
 	 * The method will catch all incoming requests
@@ -51,6 +60,9 @@ public class SecurityManager implements ContainerRequestFilter {
 				return;
 			}
 		}
+		
+		if(resMethod.isAnnotationPresent(RolesAllowed.class))
+		{
 		
 		// Getting all the headers of the entering request
 		final MultivaluedMap<String, String> headers = requestContext.getHeaders();
@@ -79,20 +91,94 @@ public class SecurityManager implements ContainerRequestFilter {
 		System.out.println(username);
 		System.out.println(password);
 		
-		if(resMethod.isAnnotationPresent(RolesAllowed.class))
-		{
+
 			RolesAllowed rolesAnn = resMethod.getAnnotation(RolesAllowed.class);
 			Set<String> roles = new HashSet<String>(Arrays.asList(rolesAnn.value()));
 			
-			if(!isUserAdmin(username, password, roles))
+			/**
+			 * if(!isUserAdmin(username, password, roles))
 			{
 				 requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
 	                        .entity(Constants.INVALID_CREDENTIALS).build());
 	                    return;
 			}
+			 *
+			 **/
+			
+			
+			// We only want to restrict to delete operations
+			if(resMethod.isAnnotationPresent(DELETE.class))
+			{
+				if(DEBUG)
+					System.out.println("DELETE Annotation detected");
+				int userRequestId = -1;
+				userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,Constants.SECURITY_DEL_PATHPARAM);					
+				if(userRequestId == -1)
+				{
+					// It means that we will directly use the user_id field of the object
+					// and compare it with the user_id of the header
+					
+					
+				}
+				
+				try {
+					if(userRequestId != -1 && !isUserCaller(username, password, userRequestId, roles))
+					{
+						if(DEBUG && userRequestId == -1)
+							System.out.println("We couldn't find the pathParam : "+Constants.SECURITY_DEL_PATHPARAM);
+						
+						requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
+								.entity(Constants.INVALID_CREDENTIALS).build());
+						return;
+					}
+					else
+					{
+						if(DEBUG)
+							System.out.println("The user is indeed wanting to delete its items --> Deletion authorized");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+					System.out.println("SQL query error");
+				}
+			}
+			else
+			{
+				if(DEBUG)
+					System.out.println("We don't need to check the authorizations because it is not a DELETE request");
+			}
+			
+
 		}
 	}
 
+	private int getPathParamFromMethodPathParam(ContainerRequestContext requestContext,Method resMethod, String delFormat) {
+		MultivaluedMap<String, String> pathParams = requestContext.getUriInfo().getPathParameters();
+		for(String p : pathParams.keySet())
+		{
+			if(p.equals(delFormat))
+			{
+				String userId = pathParams.get(delFormat).get(0);
+				return Integer.parseInt(userId);
+			}
+		}
+
+		return -1;
+	}
+
+	private int getPathParamFromMethodQueryParam(ContainerRequestContext requestContext,Method resMethod, String userIdKeyFormat) {
+		MultivaluedMap<String, String> queryParams = requestContext.getUriInfo().getQueryParameters();
+		for(String p : queryParams.keySet())
+		{
+			if(p.equals(userIdKeyFormat))
+			{
+				String userId = queryParams.get(userIdKeyFormat).get(0);
+				return Integer.parseInt(userId);
+			}
+		}
+
+		return -1;
+	}
+	
 	private boolean isUserAdmin(String username, String password, Set<String> roles) {
 		boolean requestGranted = false;
 		if(username.equals("ADMIN") &&  password.equals("ADMIN"))
@@ -103,6 +189,31 @@ public class SecurityManager implements ContainerRequestFilter {
 				requestGranted = true;
 			}
 		}
+		return requestGranted;
+	}
+	
+	private boolean isUserCaller(String usernameHeader, String passwordHeader, int userRequestId, Set<String> roles) throws SQLException {
+		boolean requestGranted = false;
+		
+		User u = new UserDao().get(userRequestId);
+		String usernameDB = u.getName();
+		String passwordDB = u.getPassword();
+		if(DEBUG)
+		{
+			System.out.println("Database User : " + usernameDB + " | " + passwordDB);
+			System.out.println("Header User : " + usernameHeader + " | " + passwordHeader);			
+		}
+		
+		if(usernameHeader.equals(usernameDB) &&  passwordHeader.equals(passwordDB))
+		{
+			String userRole = "USER";
+			String userRoleExt = "USER_Q";
+			if(roles.contains(userRole) || roles.contains(userRoleExt))
+			{
+				requestGranted = true;
+			}
+		}
+
 		return requestGranted;
 	}
 	

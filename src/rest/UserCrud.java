@@ -14,7 +14,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import dao.CommentDao;
+import dao.MediaDao;
 import dao.UserDao;
 import model.Comment;
 import model.Media;
@@ -24,7 +27,6 @@ import model.User;
 public class UserCrud implements CrudBase<User> {
 
       @Override
-      @RolesAllowed("ADMIN")
 	  @GET
 	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 	  public List<User> getAll() throws SQLException
@@ -33,6 +35,7 @@ public class UserCrud implements CrudBase<User> {
 	  }
 	  
       @Override
+      @RolesAllowed("USER")
 	  @DELETE
 	  @Path("/{id}")
 	  public void delete(@PathParam("id") int id)
@@ -97,6 +100,18 @@ public class UserCrud implements CrudBase<User> {
 		}
 	  	
 	  	/**
+	  	 * Deleting a specific comment amongst all the comments of the user
+	  	 */
+	  	@Path("/{id}/comments/{idCom}")
+	  	@RolesAllowed("USER")
+	  	@DELETE
+		public Response deleteCommentOfUser(@PathParam("id") int id, @PathParam("idCom") int idCom) throws SQLException {
+	  		new CommentDao().delete(new UserDao().getAllComments(id).get(idCom-1));
+	  		String result = "Comment has been deleted successfully for user "+id+" \n";
+			return Response.status(Status.ACCEPTED).entity(result).build();
+		}
+	  	
+	  	/**
 		 * Getting all the media for this user
 		 */
 	  	@Path("/{id}/media")
@@ -104,5 +119,27 @@ public class UserCrud implements CrudBase<User> {
 	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 		public List<Media> getAllMediaFromOneUser(@PathParam("id") int id) throws SQLException {
 			return	new UserDao().getAllMedia(id);
+		}
+	  	
+	  	/**
+	  	 * Getting a specific Media amongst all the Media
+	  	 */
+	  	@Path("/{id}/media/{idMed}")
+	  	@GET
+	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+		public Media getMediaFromAllMedia(@PathParam("id") int id, @PathParam("idMed") int idMed) throws SQLException {
+			return new UserDao().getAllMedia(id).get(idMed-1);
+		}
+	  	
+	  	/**
+	  	 * Deleting a specific Media amongst all the Media of the user
+	  	 */
+	  	@Path("/{id}/media/{idMed}")
+	  	@RolesAllowed("USER")
+	  	@DELETE
+		public Response deleteMediaOfUser(@PathParam("id") int id, @PathParam("idMed") int idMed) throws SQLException {
+	  		new MediaDao().delete(new UserDao().getAllMedia(id).get(idMed-1));
+	  		String result = "Media has been deleted successfully for user "+id+" \n";
+			return Response.status(Status.ACCEPTED).entity(result).build();
 		}
 }
