@@ -1,9 +1,14 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class User {
 	
 private int id;
 private String name;
+@JsonIgnore
+private String password;
 private String city;
 	
 	public int getId() {
@@ -25,6 +30,16 @@ private String city;
 		this.city = city;
 	}
 
+	@JsonIgnore
+	public String getPassword() {
+		return password;
+	}
+	
+	@JsonProperty
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
 	@Override
 	public String toString()
 	{

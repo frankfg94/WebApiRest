@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,6 +35,7 @@ public class MediaCrud implements CrudBase<Media> {
 	}
 
 	@Override
+    @RolesAllowed("USER")
 	@DELETE
 	@Path("/{id}")
 	public void delete(@PathParam("id") int id) {
@@ -93,6 +95,8 @@ public class MediaCrud implements CrudBase<Media> {
 		  return new MediaDao().getAuthor(id);
 	  }
 	  
+	  
+	  
 	  @GET
 	  @Path("/{id}/cat")
 	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -112,11 +116,15 @@ public class MediaCrud implements CrudBase<Media> {
 	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 	  public List<Media> sortMediasByName(@PathParam("sortType") String sortType,@PathParam("mode") String mode) throws SQLException
 	  {
-		  if(mode.isEmpty())
-		  {
-			  return null;
-		  }
 		  return new MediaDao().getMediasSortedByKeyword(sortType, mode);
+	  }
+	  
+	  @GET
+	  @Path("/sortBy/{sortType}")
+	  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	  public List<Media> sortMediasByName(@PathParam("sortType") String sortType) throws SQLException
+	  {
+		  return new MediaDao().getMediasSortedByKeyword(sortType, "asc");
 	  }
 
   
@@ -128,7 +136,7 @@ public class MediaCrud implements CrudBase<Media> {
 		  return new MediaDao().getMediaSearchByKeyWord(keyword);
 	  }
 
-    /**
+	  	/**
 		 * Getting all the comments for this media
 		 */
 	  	@Path("/{id}/comments")
@@ -137,6 +145,8 @@ public class MediaCrud implements CrudBase<Media> {
 		public List<Comment> getAllComments(@PathParam("id") int id) throws SQLException {
 			return	new MediaDao().getAllComments(id);
 		}
+	  	
+
 
 
 	  

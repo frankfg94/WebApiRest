@@ -8,6 +8,7 @@ public class Constants {
 	public static final String USER_TABLE_NAME_F = "name";
 	public static final String USER_TABLE_CITY_F = "city";
 	public static final String USER_TABLE_ID_F = "user_id";
+	public static final String USER_TABLE_PASSWORD_F = "password";
 
 	// Comment table
 	public static final String COMMENT_TABLE_NAME = "comment";
@@ -49,8 +50,8 @@ public class Constants {
 			USER_TABLE_ID_F);
 	public static final String QUERY_USER_UPDATE = String.format("UPDATE %s  SET %s = ?, %s = ? WHERE %s = ?",
 			USER_TABLE_NAME, USER_TABLE_NAME_F, USER_TABLE_CITY_F, USER_TABLE_ID_F);
-	public static final String QUERY_USER_INSERT = String.format("INSERT INTO %s(%s,%s) values(?,?)", USER_TABLE_NAME,
-			USER_TABLE_NAME_F, USER_TABLE_CITY_F);
+	public static final String QUERY_USER_INSERT = String.format("INSERT INTO %s(%s,%s,%s) values(?,?,?)", USER_TABLE_NAME,
+			USER_TABLE_NAME_F, USER_TABLE_CITY_F, USER_TABLE_PASSWORD_F);
 
 	// Comment table
 	public static final String QUERY_COMMENT_GET = String.format("SELECT * FROM %s WHERE %s = ? LIMIT 1",
@@ -87,5 +88,11 @@ public class Constants {
 
 	public static final String DB_PASSWORD = "";
 	public static final String DB_USERNAME = "root";
+	public static final String DENY_ALL_REQUEST_MESSAGE = "Sorry, you do not have the rights to use this request";
+	public static final String NO_AUTH_HEADER_MESSAGE = "No authorization header was found, so we cannot process the request";
+	public static final String INVALID_CREDENTIALS = "The credentials you entered for this rest Request are not valid";
+	public static final String SECURITY_DEL_PATHPARAM = "id";
+	public static final String ADV_HASH_ALG_NAME = "PBKDF2WithHmacSHA1";
+	
 
 }
