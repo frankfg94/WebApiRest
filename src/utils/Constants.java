@@ -92,5 +92,7 @@ public class Constants {
 	public static final String NO_AUTH_HEADER_MESSAGE = "No authorization header was found, so we cannot process the request";
 	public static final String INVALID_CREDENTIALS = "The credentials you entered for this rest Request are not valid";
 	public static final String SECURITY_DEL_PATHPARAM = "id";
+	public static final String ADV_HASH_ALG_NAME = "PBKDF2WithHmacSHA1";
+	
 
 }

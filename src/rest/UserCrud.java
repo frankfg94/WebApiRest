@@ -1,5 +1,7 @@
 package rest;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -22,6 +24,7 @@ import dao.UserDao;
 import model.Comment;
 import model.Media;
 import model.User;
+import utils.Utilities;
 
 @Path("users")
 public class UserCrud implements CrudBase<User> {
@@ -38,7 +41,7 @@ public class UserCrud implements CrudBase<User> {
       @RolesAllowed("USER")
 	  @DELETE
 	  @Path("/{id}")
-	  public void delete(@PathParam("id") int id)
+	  public void delete(@PathParam("id") int id) throws SQLException
 	  {
 		 new UserDao().delete(id);
 	  }
@@ -140,6 +143,20 @@ public class UserCrud implements CrudBase<User> {
 		public Response deleteMediaOfUser(@PathParam("id") int id, @PathParam("idMed") int idMed) throws SQLException {
 	  		new MediaDao().delete(new UserDao().getAllMedia(id).get(idMed-1));
 	  		String result = "Media has been deleted successfully for user "+id+" \n";
+			return Response.status(Status.ACCEPTED).entity(result).build();
+		}
+	  	
+	  	/**
+	  	 * Hash all the passwords of the users in the database
+	  	 * @throws InvalidKeySpecException 
+	  	 * @throws NoSuchAlgorithmException 
+	  	 */
+	  	@Path("/hashAll")
+	  	@RolesAllowed("ADMIN")
+	  	@GET
+		public Response hashPasswords() throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
+	  		Utilities.HashDbPasswords();
+	  		String result = "All the users now have hashed passwords\n";
 			return Response.status(Status.ACCEPTED).entity(result).build();
 		}
 }

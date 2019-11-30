@@ -99,11 +99,23 @@ public class UserDao extends Dao<User> {
 	}
 	
 	@Override
-	public void delete(User t) {
+	public void delete(User t) throws SQLException {
         delete(t.getId());
 	}
 	
-	public void delete(int id){
+	public void delete(int id) throws SQLException{
+		
+		// Deleting the childs
+		String queryDelCom = String.format("Delete from Comment WHERE user_id = %d",id);
+		String queryDelMed = String.format("Delete from Media WHERE user_id = %d",id);
+		
+    	PreparedStatement preparedStmtCom = Dao.getConnection().prepareStatement(queryDelCom);
+    	PreparedStatement preparedStmtMed = Dao.getConnection().prepareStatement(queryDelMed);
+
+    	preparedStmtCom.executeUpdate();
+    	preparedStmtMed.executeUpdate();
+    	
+		// Deleting the parent
 		super.delete(Constants.USER_TABLE_NAME, Constants.USER_TABLE_ID_F, id);
 	}
 	

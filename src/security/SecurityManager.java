@@ -23,8 +23,11 @@ import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
 import dao.UserDao;
 import model.User;
 import utils.Constants;
+import utils.Utilities;
 
 import java.lang.reflect.Method;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -42,6 +45,7 @@ public class SecurityManager implements ContainerRequestFilter {
 	private static final String AUTHORIZATION_PROPERTY = "Authorization";
 	private static final String AUTHENTICATION_SCHEME = "Basic";
 	private static final boolean DEBUG = true;
+	private static final boolean HASH_ALG_ENABLED = true;
 	
 	/**
 	 * The method will catch all incoming requests
@@ -87,6 +91,9 @@ public class SecurityManager implements ContainerRequestFilter {
 		final String username = tokenizer.nextToken();
 		final String password = tokenizer.nextToken();
 		
+		
+
+		
 		// Verifying username and password
 		System.out.println(username);
 		System.out.println(password);
@@ -105,7 +112,8 @@ public class SecurityManager implements ContainerRequestFilter {
 			 *
 			 **/
 			
-			
+			boolean checkAdminRole = true;
+
 			// We only want to restrict to delete operations
 			if(resMethod.isAnnotationPresent(DELETE.class))
 			{
@@ -113,14 +121,7 @@ public class SecurityManager implements ContainerRequestFilter {
 					System.out.println("DELETE Annotation detected");
 				int userRequestId = -1;
 				userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,Constants.SECURITY_DEL_PATHPARAM);					
-				if(userRequestId == -1)
-				{
-					// It means that we will directly use the user_id field of the object
-					// and compare it with the user_id of the header
-					
-					
-				}
-				
+
 				try {
 					if(userRequestId != -1 && !isUserCaller(username, password, userRequestId, roles))
 					{
@@ -133,6 +134,7 @@ public class SecurityManager implements ContainerRequestFilter {
 					}
 					else
 					{
+						checkAdminRole = false;
 						if(DEBUG)
 							System.out.println("The user is indeed wanting to delete its items --> Deletion authorized");
 					}
@@ -145,9 +147,15 @@ public class SecurityManager implements ContainerRequestFilter {
 			{
 				if(DEBUG)
 					System.out.println("We don't need to check the authorizations because it is not a DELETE request");
+			}	
+			
+			if(	checkAdminRole == true && !isUserAdmin(username, password, roles))
+			{
+				requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
+						.entity(Constants.INVALID_CREDENTIALS).build());
+				return;
 			}
 			
-
 		}
 	}
 
@@ -165,20 +173,9 @@ public class SecurityManager implements ContainerRequestFilter {
 		return -1;
 	}
 
-	private int getPathParamFromMethodQueryParam(ContainerRequestContext requestContext,Method resMethod, String userIdKeyFormat) {
-		MultivaluedMap<String, String> queryParams = requestContext.getUriInfo().getQueryParameters();
-		for(String p : queryParams.keySet())
-		{
-			if(p.equals(userIdKeyFormat))
-			{
-				String userId = queryParams.get(userIdKeyFormat).get(0);
-				return Integer.parseInt(userId);
-			}
-		}
-
-		return -1;
-	}
-	
+	/**
+	 * The admin has the rights for this project to execute critical commands
+	 */
 	private boolean isUserAdmin(String username, String password, Set<String> roles) {
 		boolean requestGranted = false;
 		if(username.equals("ADMIN") &&  password.equals("ADMIN"))
@@ -202,6 +199,27 @@ public class SecurityManager implements ContainerRequestFilter {
 		{
 			System.out.println("Database User : " + usernameDB + " | " + passwordDB);
 			System.out.println("Header User : " + usernameHeader + " | " + passwordHeader);			
+		}
+		if(HASH_ALG_ENABLED)
+		{
+			try {
+				// passwordDB should already be hashed in this case
+				if(!Utilities.validatePassword(passwordHeader, passwordDB))
+				{
+					// If the hashed entered password does not match with, we won't bother validating the username and the rest of the algorithm
+					// So we stop it there
+					return false;
+				}
+				else
+				{
+					passwordDB = passwordHeader;
+				}
+				}
+			catch (NoSuchAlgorithmException  | InvalidKeySpecException ex) 
+			{
+				ex.printStackTrace();
+				return false;
+			}
 		}
 		
 		if(usernameHeader.equals(usernameDB) &&  passwordHeader.equals(passwordDB))
