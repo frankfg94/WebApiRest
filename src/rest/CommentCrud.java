@@ -34,7 +34,7 @@ public class CommentCrud implements CrudBase<Comment>{
 	  
 	  @Override
 	  @DELETE
-	  @RolesAllowed("ADMIN")
+	  @RolesAllowed({"USER","ADMIN"})
 	  @Path("/{id}")
 	  public void delete(@PathParam("id") int id)
 	  {
