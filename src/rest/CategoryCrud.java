@@ -87,7 +87,7 @@ public class CategoryCrud implements CrudBase<Category>{
 	 */
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-	@Path("/{id}/medias")
+	@Path("/{id}/media")
 	public List<Media> getAllMediasForCategoryId(@PathParam("id") int id) throws SQLException 
 	{
 		List<Media> medias = new MediaDao().getAll();

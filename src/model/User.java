@@ -1,8 +1,11 @@
 package model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@XmlRootElement
 public class User {
 	
 private int id;
