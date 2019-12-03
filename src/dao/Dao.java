@@ -9,8 +9,6 @@ import java.sql.SQLException;
 import java.util.List;
 import utils.Constants;
 
-//Dao = Data Access Object
-
 public abstract class Dao<T> {
 	
 	/* The connection we use to query our database*/

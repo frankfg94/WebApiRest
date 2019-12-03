@@ -28,20 +28,20 @@ public class CommentDao extends Dao<Comment> {
 	
 	@Override
 	public Comment get(long id) throws SQLException {
-        	PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_COMMENT_GET);
-        	stment.setInt(1, (int) id);
-        	stment.executeQuery();
-			ResultSet rs = stment.getResultSet();
-			if(rs.next())
-			{
-				Comment comment = new Comment();
-				comment.setComment_id(rs.getInt(Constants.COMMENT_TABLE_ID_F));
-				comment.setContent(rs.getString(Constants.COMMENT_TABLE_CONTENT_F));
-				comment.setUser_id(rs.getInt(Constants.COMMENT_TABLE_USER_ID_F));
-				comment.setMedia_id(rs.getInt(Constants.COMMENT_TABLE_MEDIA_ID_F));
-				comment.setRate(rs.getInt(Constants.COMMENT_TABLE_RATE_F));
-				return comment;
-			}
+        PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_COMMENT_GET);
+        stment.setInt(1, (int) id);
+        stment.executeQuery();
+		ResultSet rs = stment.getResultSet();
+		if(rs.next())
+		{
+			Comment comment = new Comment();
+			comment.setComment_id(rs.getInt(Constants.COMMENT_TABLE_ID_F));
+			comment.setContent(rs.getString(Constants.COMMENT_TABLE_CONTENT_F));
+			comment.setUser_id(rs.getInt(Constants.COMMENT_TABLE_USER_ID_F));
+			comment.setMedia_id(rs.getInt(Constants.COMMENT_TABLE_MEDIA_ID_F));
+			comment.setRate(rs.getInt(Constants.COMMENT_TABLE_RATE_F));
+			return comment;
+		}
 		return null;
 
 	}
@@ -53,22 +53,19 @@ public class CommentDao extends Dao<Comment> {
 
 		rs = Dao.getConnection().createStatement().executeQuery(Constants.QUERY_COMMENT_GET_ALL);
 		commentList = new ArrayList<Comment>();
-	           
-		//if(INFOS)
-			   //Logger.getLogger(UserDao.class.getName()).log(Level.INFO,"Result count : " + Utilities.getResultSetSize(rs));
-		
+
 		while (rs.next()) {
-	               Comment comment = new Comment();
-	               comment.setComment_id(rs.getInt(Constants.COMMENT_TABLE_ID_F));
-				   comment.setContent(rs.getString(Constants.COMMENT_TABLE_CONTENT_F));
-				   comment.setUser_id(rs.getInt(Constants.COMMENT_TABLE_USER_ID_F));
-				   comment.setMedia_id(rs.getInt(Constants.COMMENT_TABLE_MEDIA_ID_F));
-				   comment.setRate(rs.getInt(Constants.COMMENT_TABLE_RATE_F));
+			Comment comment = new Comment();
+	        comment.setComment_id(rs.getInt(Constants.COMMENT_TABLE_ID_F));
+			comment.setContent(rs.getString(Constants.COMMENT_TABLE_CONTENT_F));
+			comment.setUser_id(rs.getInt(Constants.COMMENT_TABLE_USER_ID_F));
+			comment.setMedia_id(rs.getInt(Constants.COMMENT_TABLE_MEDIA_ID_F));
+			comment.setRate(rs.getInt(Constants.COMMENT_TABLE_RATE_F));
 	               
-	               if(INFOS)
-	            	   Logger.getLogger(CommentDao.class.getName()).log(Level.INFO,comment.toString());
+	        if(INFOS)
+	        	Logger.getLogger(CommentDao.class.getName()).log(Level.INFO,comment.toString());
 	        commentList.add(comment);    
-			}
+		}
 		return commentList;
 	}
 

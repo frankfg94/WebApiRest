@@ -30,19 +30,19 @@ public class UserDao extends Dao<User> {
 	
 	@Override
 	public User get(long id) throws SQLException {
-        	PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_USER_GET);
-        	stment.setInt(1, (int) id);
-        	stment.executeQuery();
-			ResultSet rs = stment.getResultSet();
-			if(rs.next())
-			{
-				User user = new User();
-				user.setUser_id(rs.getInt(Constants.USER_TABLE_ID_F));
-				user.setName(rs.getString(Constants.USER_TABLE_NAME_F));
-				user.setCity(rs.getString(Constants.USER_TABLE_CITY_F));
-				user.setPassword(rs.getString(Constants.USER_TABLE_PASSWORD_F));
-				return user;
-			}
+        PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_USER_GET);
+        stment.setInt(1, (int) id);
+        stment.executeQuery();
+		ResultSet rs = stment.getResultSet();
+		if(rs.next())
+		{
+			User user = new User();
+			user.setUser_id(rs.getInt(Constants.USER_TABLE_ID_F));
+			user.setName(rs.getString(Constants.USER_TABLE_NAME_F));
+			user.setCity(rs.getString(Constants.USER_TABLE_CITY_F));
+			user.setPassword(rs.getString(Constants.USER_TABLE_PASSWORD_F));
+			return user;
+		}
 		return null;
 	}
 
@@ -50,14 +50,10 @@ public class UserDao extends Dao<User> {
 	public List<User> getAll() throws SQLException  {
 		ResultSet rs;
 		List<User>  users = null;
-		
-			
+				
 		rs = Dao.getConnection().createStatement().executeQuery(Constants.QUERY_USER_GET_ALL);
 		users = new ArrayList<User>();
-	           
-		//if(INFOS)
-			   //Logger.getLogger(UserDao.class.getName()).log(Level.INFO,"Result count : " + Utilities.getResultSetSize(rs));
-		
+
 		while (rs.next()) {
 	               User u = new User();
 	               u.setUser_id(rs.getInt(Constants.USER_TABLE_ID_F));
@@ -107,21 +103,6 @@ public class UserDao extends Dao<User> {
 	}
 	
 	public void delete(int id) throws SQLException{
-		
-		/**
-		 * 		
-		// Deleting the childs
-		String queryDelCom = String.format("Delete from Comment WHERE user_id = '%d'",id);
-		String queryDelMed = String.format("Delete from Media WHERE user_id = '%d'",id);
-		
-    	PreparedStatement preparedStmtCom = Dao.getConnection().prepareStatement(queryDelCom);
-    	PreparedStatement preparedStmtMed = Dao.getConnection().prepareStatement(queryDelMed);
-
-    	preparedStmtCom.executeUpdate();
-    	preparedStmtMed.executeUpdate();
-    	
-		 */
-
 		// Deleting the parent
 		super.delete(Constants.USER_TABLE_NAME, Constants.USER_TABLE_ID_F, id);
 	}

@@ -33,14 +33,10 @@ public class CategoryDao extends Dao<Category>{
 	public List<Category> getAll() throws SQLException {
 		ResultSet rs;
 		List<Category>  cats = null;
-		
 			
 		rs = Dao.getConnection().createStatement().executeQuery(Constants.QUERY_CAT_GET_ALL);
 		cats = new ArrayList<Category>();
-	           
-		//if(INFOS)
-			   //Logger.getLogger(UserDao.class.getName()).log(Level.INFO,"Result count : " + Utilities.getResultSetSize(rs));
-		
+
 		while (rs.next()) {
 			Category cat = new Category();
 			cat.setId(rs.getInt(Constants.CAT_TABLE_ID_F));

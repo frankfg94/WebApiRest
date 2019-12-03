@@ -47,10 +47,6 @@ public class MediaDao extends Dao<Media> {
 		rs = Dao.getConnection().createStatement().executeQuery(Constants.QUERY_MEDIA_GET_ALL);
 		mediaList = new ArrayList<Media>();
 
-		// if(INFOS)
-		// Logger.getLogger(UserDao.class.getName()).log(Level.INFO,"Result
-		// count : " + Utilities.getResultSetSize(rs));
-
 		while (rs.next()) {
 			Media media = new Media();
 			media.setMedia_id(rs.getInt(Constants.MEDIA_TABLE_ID_F));

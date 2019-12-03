@@ -81,7 +81,6 @@ public class Utilities {
 	
     public static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException
     {
-    	
     	// Format of the stored password : {iteration count}:{salt}:{hash}, we get each one of them
         String[] parts = storedPassword.split(":");
         int iterations = Integer.parseInt(parts[0]);

@@ -95,14 +95,6 @@ public class SecurityManager implements ContainerRequestFilter {
 			RolesAllowed rolesAnn = resMethod.getAnnotation(RolesAllowed.class);
 			Set<String> roles = new HashSet<String>(Arrays.asList(rolesAnn.value()));
 
-			/**
-			 * if(!isUserAdmin(username, password, roles)) {
-			 * requestContext.abortWith(Response.status(Response.Status.
-			 * UNAUTHORIZED) .entity(Constants.INVALID_CREDENTIALS).build());
-			 * return; }
-			 *
-			 **/
-
 			boolean checkAdminRole = true;
 
 			// We only want to restrict to delete operations
@@ -194,7 +186,6 @@ public class SecurityManager implements ContainerRequestFilter {
 		}
 		if (HASH_ALG_ENABLED) {
 			try {
-				// passwordDB should already be hashed in this case
 				if (!Utilities.validatePassword(passwordHeader, passwordDB)) {
 					// If the hashed entered password does not match with, we
 					// won't bother validating the username and the rest of the
@@ -212,8 +203,7 @@ public class SecurityManager implements ContainerRequestFilter {
 
 		if (usernameHeader.equals(usernameDB) && passwordHeader.equals(passwordDB)) {
 			String userRole = "USER";
-			String userRoleExt = "USER_Q";
-			if (roles.contains(userRole) || roles.contains(userRoleExt)) {
+			if (roles.contains(userRole)) {
 				requestGranted = true;
 			}
 		}
