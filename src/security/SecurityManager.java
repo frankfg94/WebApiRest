@@ -110,7 +110,8 @@ public class SecurityManager implements ContainerRequestFilter {
 				if (DEBUG)
 					System.out.println("DELETE Annotation detected");
 				int userRequestId = -1;
-				userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,Constants.SECURITY_DEL_PATHPARAM);
+				userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,
+						Constants.SECURITY_DEL_PATHPARAM);
 
 				try {
 					if (userRequestId != -1 && !isUserCaller(username, password, userRequestId, roles)) {
@@ -123,7 +124,8 @@ public class SecurityManager implements ContainerRequestFilter {
 					} else {
 						checkAdminRole = false;
 						if (DEBUG)
-							System.out.println("The user is indeed wanting to delete its items --> Deletion authorized");
+							System.out
+									.println("The user is indeed wanting to delete its items --> Deletion authorized");
 					}
 				} catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
 					e.printStackTrace();
@@ -180,8 +182,10 @@ public class SecurityManager implements ContainerRequestFilter {
 			if(tempUser.getName().equals(usernameHeader) && Utilities.validatePassword(passwordHeader, tempUser.getPassword()))
 				u = tempUser;
 		}
-				
-				
+		
+		if(u == null)
+			return false;
+		
 		String usernameDB = u.getName();
 		String passwordDB = u.getPassword();
 		if (DEBUG) {

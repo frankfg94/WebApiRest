@@ -45,8 +45,8 @@ public class CategoryDao extends Dao<Category>{
 			Category cat = new Category();
 			cat.setId(rs.getInt(Constants.CAT_TABLE_ID_F));
 			cat.setCat_name(rs.getString(Constants.CAT_TABLE_NAME_F));
-			
-	        Logger.getLogger(CategoryDao.class.getName()).log(Level.INFO,cat.toString());
+
+			Logger.getLogger(CategoryDao.class.getName()).log(Level.INFO,cat.toString());
 	        cats.add(cat);    
 			}
 		return cats;
@@ -63,7 +63,6 @@ public class CategoryDao extends Dao<Category>{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
@@ -72,10 +71,7 @@ public class CategoryDao extends Dao<Category>{
 		preparedStmt.setString(1, t.getCat_name());
 		preparedStmt.setInt(2, t.getId());
 		preparedStmt.execute();
-		
 		Logger.getLogger(UserDao.class.getName()).log(Level.INFO,"Update of Category "+ t.getId() +" | "+ t.getCat_name() +"  is successful");
-
-		
 	}
 
 	@Override

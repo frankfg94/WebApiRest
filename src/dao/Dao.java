@@ -1,5 +1,7 @@
 package dao;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,7 +20,7 @@ public abstract class Dao<T> {
 	
 	 	abstract T get(long id) throws SQLException;
 	    abstract List<T> getAll() throws SQLException;
-	    abstract void save(T t) throws SQLException;	     
+	    abstract void save(T t) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException;	     
 	    abstract void update(T t)  throws SQLException;
 	    abstract void delete(T t)throws SQLException;
 	    
