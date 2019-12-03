@@ -35,7 +35,7 @@ public class CategoryCrud implements CrudBase<Category>{
 
 	@Override
 	@DELETE
-	@RolesAllowed("USER")
+	@RolesAllowed("ADMIN")
 	@Path("/{id}")
 	public void delete(@PathParam("id")int id) throws SQLException {
 		new CategoryDao().delete(id);
