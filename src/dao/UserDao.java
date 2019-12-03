@@ -1,5 +1,7 @@
 package dao;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +14,7 @@ import model.Comment;
 import model.Media;
 import model.User;
 import utils.Constants;
+import utils.Utilities;
 
 /**
  * Structure of a User table
@@ -70,12 +73,12 @@ public class UserDao extends Dao<User> {
 	}
 
 	@Override
-	public void save(User t) {
+	public void save(User t) throws NoSuchAlgorithmException, InvalidKeySpecException {
 	    try {
 			PreparedStatement stment = Dao.getConnection().prepareStatement(Constants.QUERY_USER_INSERT);
             stment.setString(1, t.getName());
             stment.setString(2, t.getCity());
-            stment.setString(3, t.getPassword());
+            stment.setString(3, Utilities.generateStorngPasswordHash(t.getPassword()));
 			stment.executeUpdate();
 			
 			if(INFOS)

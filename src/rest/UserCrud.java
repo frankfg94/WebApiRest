@@ -74,7 +74,7 @@ public class UserCrud implements CrudBase<User> {
 	  @Override
 	  @POST
 	  @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-	  public Response add(User user){
+	  public Response add(User user) throws NoSuchAlgorithmException, InvalidKeySpecException{
 		    new UserDao().save(user);
 	        String result = "Data sent successfully  :  \n"+ user;
 	        return Response.status(201).entity(result).build();

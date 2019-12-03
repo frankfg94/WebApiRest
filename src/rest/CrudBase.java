@@ -1,5 +1,7 @@
 package rest;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.List;
 import javax.ws.rs.PathParam;
@@ -21,6 +23,6 @@ public interface  CrudBase<T> {
 	  
 	  public  T find(@PathParam("id") int id) throws SQLException;
 	  
-	  public  Response add(T com);
+	  public  Response add(T com) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
 }
