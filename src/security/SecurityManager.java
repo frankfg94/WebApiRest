@@ -6,25 +6,21 @@ import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
-
-import org.apache.tomcat.util.http.fileupload.RequestContext;
 import org.glassfish.jersey.internal.util.Base64;
-
-import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
-
+import dao.CommentDao;
+import dao.MediaDao;
 import dao.UserDao;
 import model.User;
 import utils.Constants;
 import utils.Utilities;
-
 import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -40,6 +36,9 @@ public class SecurityManager implements ContainerRequestFilter {
 
 	@Context
 	private ResourceInfo resourceInfo;
+
+	@Context
+	UriInfo uriInfo;
 
 	private static final String AUTHORIZATION_PROPERTY = "Authorization";
 	private static final String AUTHENTICATION_SCHEME = "Basic";
@@ -87,10 +86,10 @@ public class SecurityManager implements ContainerRequestFilter {
 			final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
 			final String username = tokenizer.nextToken();
 			final String password = tokenizer.nextToken();
-			
-			if(username.equals("ADMIN") && password.equals("ADMIN"))
+
+			if (username.equals("ADMIN") && password.equals("ADMIN"))
 				return;
-			
+
 			// Verifying username and password
 			System.out.println(username);
 			System.out.println(password);
@@ -105,8 +104,13 @@ public class SecurityManager implements ContainerRequestFilter {
 				if (DEBUG)
 					System.out.println("DELETE Annotation detected");
 				int userRequestId = -1;
-				userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,
-						Constants.SECURITY_DEL_PATHPARAM);
+				try {
+					userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,
+							Constants.SECURITY_DEL_PATHPARAM);
+				} catch (NumberFormatException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
 				try {
 					if (userRequestId != -1 && !isUserCaller(username, password, userRequestId, roles)) {
@@ -120,7 +124,7 @@ public class SecurityManager implements ContainerRequestFilter {
 						checkAdminRole = false;
 						if (DEBUG)
 							System.out
-									.println("The user is indeed wanting to delete its items --> Deletion authorized");
+							.println("The user is indeed wanting to delete its items --> Deletion authorized");
 					}
 				} catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
 					e.printStackTrace();
@@ -141,12 +145,23 @@ public class SecurityManager implements ContainerRequestFilter {
 	}
 
 	private int getPathParamFromMethodPathParam(ContainerRequestContext requestContext, Method resMethod,
-			String delFormat) {
+			String delFormat) throws NumberFormatException, SQLException {
+
 		MultivaluedMap<String, String> pathParams = requestContext.getUriInfo().getPathParameters();
-		for (String p : pathParams.keySet()) {
-			if (p.equals(delFormat)) {
-				String userId = pathParams.get(delFormat).get(0);
-				return Integer.parseInt(userId);
+
+		String path = uriInfo.getAbsolutePath().getRawPath();
+		String[] args = path.split("/");
+
+		if (args[args.length - 2].contains("/media")) {
+			return new MediaDao().get(Integer.parseInt(args[args.length - 1])).getUser_id();
+		} else if (args[args.length - 2].contains("/comment")) {
+			return new CommentDao().get(Integer.parseInt(args[args.length - 1])).getUser_id();
+		} else {
+			for (String p : pathParams.keySet()) {
+				if (p.equals(delFormat)) {
+					String userId = pathParams.get(delFormat).get(0);
+					return Integer.parseInt(userId);
+				}
 			}
 		}
 
@@ -171,40 +186,53 @@ public class SecurityManager implements ContainerRequestFilter {
 			throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
 		boolean requestGranted = false;
 
-		List<User> users = new UserDao().getAll();
-		User u = null;
-		for(User tempUser : users){
-			if(tempUser.getName().equals(usernameHeader) && Utilities.validatePassword(passwordHeader, tempUser.getPassword()))
-				u = tempUser;
-		}
-		
-		String usernameDB = u.getName();
-		String passwordDB = 	u.getPassword();
-		if (DEBUG) {
-			System.out.println("Database User : " + usernameDB + " | " + passwordDB);
-			System.out.println("Header User : " + usernameHeader + " | " + passwordHeader);
-		}
-		if (HASH_ALG_ENABLED) {
-			try {
-				if (!Utilities.validatePassword(passwordHeader, passwordDB)) {
-					// If the hashed entered password does not match with, we
-					// won't bother validating the username and the rest of the
-					// algorithm
-					// So we stop it there
-					return false;
-				} else {
-					passwordDB = passwordHeader;
-				}
-			} catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-				ex.printStackTrace();
-				return false;
-			}
-		}
+		String path = uriInfo.getAbsolutePath().getRawPath();
 
-		if (usernameHeader.equals(usernameDB) && passwordHeader.equals(passwordDB)) {
-			String userRole = "USER";
-			if (roles.contains(userRole)) {
-				requestGranted = true;
+		User u = null;
+		// Dans la classe users
+		if (!path.contains("/users")) {
+			System.out.println("non users mode");
+			List<User> users = new UserDao().getAll();
+			u = null;
+			for (User tempUser : users) {
+				if (!requestGranted && tempUser.getName().equals(usernameHeader) && userRequestId == tempUser.getId()) {
+					u = tempUser;
+					requestGranted = true;
+				}
+			}
+		} else {
+			System.out.print("users mode");
+			u = new UserDao().get(userRequestId);
+			String usernameDB = u.getName();
+			String passwordDB = u.getPassword();
+			if (DEBUG) {
+				System.out.println("Database User : " + usernameDB + " | " + passwordDB);
+				System.out.println("Header User : " + usernameHeader + " | " + passwordHeader);
+			}
+			if (HASH_ALG_ENABLED) {
+				try {
+					if (!Utilities.validatePassword(passwordHeader, passwordDB)) {
+						// If the hashed entered password does not match with,
+						// we
+						// won't bother validating the username and the rest of
+						// the
+						// algorithm
+						// So we stop it there
+						return false;
+					} else {
+						passwordDB = passwordHeader;
+					}
+				} catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+					ex.printStackTrace();
+					return false;
+				}
+			}
+
+			if (usernameHeader.equals(usernameDB) && passwordHeader.equals(passwordDB)) {
+				String userRole = "USER";
+				if (roles.contains(userRole)) {
+					requestGranted = true;
+				}
 			}
 		}
 

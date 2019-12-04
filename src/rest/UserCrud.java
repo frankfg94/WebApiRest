@@ -94,7 +94,6 @@ public class UserCrud implements CrudBase<User> {
 	  	
 	  	/**
 	  	 * Getting a specific comment amongst all the comments
-	  	 */
 	  	@Path("/{id}/comments/{idCom}")
 	  	@GET
 	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -104,7 +103,6 @@ public class UserCrud implements CrudBase<User> {
 	  	
 	  	/**
 	  	 * Deleting a specific comment amongst all the comments of the user
-	  	 */
 	  	@Path("/{id}/comments/{idCom}")
 	  	@RolesAllowed("USER")
 	  	@DELETE
