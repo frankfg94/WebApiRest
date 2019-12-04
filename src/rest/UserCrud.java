@@ -99,7 +99,12 @@ public class UserCrud implements CrudBase<User> {
 	  	@GET
 	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 		public Comment getCommentFromAllComments(@PathParam("id") int id, @PathParam("idCom") int idCom) throws SQLException {
-			return	new UserDao().getAllComments(id).get(idCom-1);
+			List<Comment> com = new UserDao().getAllComments(id);
+			for(Comment c : com){
+				if(c.getComment_id()==idCom)
+					return c;
+			}
+			return null;
 		}
 	  	
 	  	/**
@@ -109,8 +114,12 @@ public class UserCrud implements CrudBase<User> {
 	  	@RolesAllowed("USER")
 	  	@DELETE
 		public Response deleteCommentOfUser(@PathParam("id") int id, @PathParam("idCom") int idCom) throws SQLException {
-	  		new CommentDao().delete(new UserDao().getAllComments(id).get(idCom-1));
-	  		String result = "Comment has been deleted successfully for user "+id+" \n";
+			List<Comment> com = new UserDao().getAllComments(id);
+			for(Comment c : com){
+				if(c.getComment_id()==idCom)
+					new CommentDao().delete(idCom);;
+			}
+			String result = "Comment has been deleted successfully for user "+id+" \n";
 			return Response.status(Status.ACCEPTED).entity(result).build();
 		}
 	  	
@@ -131,7 +140,12 @@ public class UserCrud implements CrudBase<User> {
 	  	@GET
 	  	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 		public Media getMediaFromAllMedia(@PathParam("id") int id, @PathParam("idMed") int idMed) throws SQLException {
-			return new UserDao().getAllMedia(id).get(idMed-1);
+			List<Media> med = new UserDao().getAllMedia(id);
+			for(Media m : med){
+				if(m.getMedia_id()==idMed)
+					return m;
+			}
+			return null;
 		}
 	  	
 	  	/**
@@ -141,8 +155,12 @@ public class UserCrud implements CrudBase<User> {
 	  	@RolesAllowed("USER")
 	  	@DELETE
 		public Response deleteMediaOfUser(@PathParam("id") int id, @PathParam("idMed") int idMed) throws SQLException {
-	  		new MediaDao().delete(new UserDao().getAllMedia(id).get(idMed-1));
-	  		String result = "Media has been deleted successfully for user "+id+" \n";
+	  		List<Media> med = new UserDao().getAllMedia(id);
+			for(Media m : med){
+				if(m.getMedia_id()==idMed)
+					new MediaDao().delete(idMed);
+			}
+			String result = "Media has been deleted successfully for user "+id+" \n";
 			return Response.status(Status.ACCEPTED).entity(result).build();
 		}
 	  	

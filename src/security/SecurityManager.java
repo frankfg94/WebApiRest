@@ -20,6 +20,8 @@ import org.glassfish.jersey.internal.util.Base64;
 
 import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
 
+import dao.CommentDao;
+import dao.MediaDao;
 import dao.UserDao;
 import model.User;
 import utils.Constants;
@@ -105,11 +107,14 @@ public class SecurityManager implements ContainerRequestFilter {
 				if (DEBUG)
 					System.out.println("DELETE Annotation detected");
 				int userRequestId = -1;
-				userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,
-						Constants.SECURITY_DEL_PATHPARAM);
+				try {
+					userRequestId = getPathParamFromMethodPathParam(requestContext, resMethod,Constants.SECURITY_DEL_PATHPARAM);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 
 				try {
-					if (userRequestId != -1 && !isUserCaller(username, password, userRequestId, roles)) {
+					if (!isUserCaller(username, password, userRequestId, roles) && userRequestId != -1) {
 						if (DEBUG && userRequestId == -1)
 							System.out.println("We couldn't find the pathParam : " + Constants.SECURITY_DEL_PATHPARAM);
 
@@ -119,8 +124,9 @@ public class SecurityManager implements ContainerRequestFilter {
 					} else {
 						checkAdminRole = false;
 						if (DEBUG)
-							System.out
-									.println("The user is indeed wanting to delete its items --> Deletion authorized");
+							System.out.println("The user is indeed wanting to delete its items --> Deletion authorized");
+						if(!roles.contains("USER"))
+							requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(Constants.INVALID_CREDENTIALS).build());
 					}
 				} catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
 					e.printStackTrace();
@@ -141,13 +147,18 @@ public class SecurityManager implements ContainerRequestFilter {
 	}
 
 	private int getPathParamFromMethodPathParam(ContainerRequestContext requestContext, Method resMethod,
-			String delFormat) {
-		MultivaluedMap<String, String> pathParams = requestContext.getUriInfo().getPathParameters();
-		for (String p : pathParams.keySet()) {
-			if (p.equals(delFormat)) {
-				String userId = pathParams.get(delFormat).get(0);
-				return Integer.parseInt(userId);
-			}
+			String delFormat) throws SQLException {
+		int id = -1;
+		String path = requestContext.getUriInfo().getPath();
+		String[] url = path.split("/");
+		String elToDelete = url[url.length-2];
+		id = Integer.parseInt(url[url.length-1]);
+		if(elToDelete.equals("media")){
+			return new MediaDao().get((long)id).getUser_id();
+		}else if(elToDelete.equals("users")){
+			return id;
+		}else if(elToDelete.equals("comments")){
+			return new CommentDao().get((long)id).getUser_id();
 		}
 
 		return -1;
@@ -174,9 +185,12 @@ public class SecurityManager implements ContainerRequestFilter {
 		List<User> users = new UserDao().getAll();
 		User u = null;
 		for(User tempUser : users){
-			if(tempUser.getName().equals(usernameHeader) && Utilities.validatePassword(passwordHeader, tempUser.getPassword()))
+			if(tempUser.getName().equals(usernameHeader) && Utilities.validatePassword(passwordHeader, tempUser.getPassword()) && tempUser.getId()==userRequestId)
 				u = tempUser;
 		}
+		
+		if(u==null)
+			return false;
 		
 		String usernameDB = u.getName();
 		String passwordDB = 	u.getPassword();
