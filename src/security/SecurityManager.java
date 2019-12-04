@@ -6,7 +6,6 @@ import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
@@ -15,10 +14,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.tomcat.util.http.fileupload.RequestContext;
 import org.glassfish.jersey.internal.util.Base64;
-
-import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
 
 import dao.CommentDao;
 import dao.MediaDao;

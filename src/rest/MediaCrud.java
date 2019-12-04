@@ -38,8 +38,7 @@ public class MediaCrud implements CrudBase<Media> {
 	public void delete(@PathParam("id") int id) {
 		new MediaDao().delete(id);
 	}
-	
-	///Pas mieux de mettre le path a {id} pour ne pas avoir a le remettre en param ensuite ???
+
 	@Override
 	@PUT
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
